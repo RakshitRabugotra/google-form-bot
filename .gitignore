@@ -1,0 +1,12 @@
+
+# Environment variable files
+.env
+
+# Virtual Environment files
+**/venv
+
+# The compilation cache
+**/__pycache__
+
+# The logging files
+*.log
