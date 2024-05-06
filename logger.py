@@ -8,6 +8,7 @@ load_dotenv()
 
 # Initiate the logger
 logger = logging.getLogger(__name__)
+
 # Set a formatter
 formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
