@@ -25,8 +25,6 @@ class Driver:
         # Initiate the driver
         self.url = url
         self.xPaths = xPaths
-        self.driver = webdriver.Chrome()
-        self.driver.get(url)
 
     @property
     def is_good(self):
@@ -48,6 +46,8 @@ class Driver:
         count = 0
 
         while (count <= responses):
+            self.driver = webdriver.Chrome()
+            self.driver.get(self.url)
             # Iterate over each xPath and give response for that based on the input
             for xPath in self.xPaths:
                 # Get the options for the
@@ -82,8 +82,6 @@ class Driver:
 
             # Refresh with a new window
             self.driver.close()
-            self.driver = webdriver.Chrome()
-            self.driver.get(self.url)
         # end-while
 
     def submit_form(self, elementXPath: str) -> None:
@@ -120,7 +118,7 @@ class Driver:
 
             case ElementType.TEXT:
                 result['element'] = xPath.options[0]
-                result['payload'] = randomizer.random_text(xPath.name)
+                result['payload'] = randomizer.generate_text(xPath.name)
 
             case ElementType.SUBMIT:
                 logger.info(f"Generating Result for: {xPath.name}...")

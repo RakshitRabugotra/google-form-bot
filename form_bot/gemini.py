@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 # Gemini API
 import google.generativeai as genai
 
+# Error types
+from .types.errors import GeminiError
+
 # Load the environment variables
 load_dotenv()
 
@@ -18,7 +21,13 @@ finally:
     response_min_length = max(response_min_length, 50)
 
 # Configure Gemini
-genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+if os.getenv('GEMINI_API_KEY') is None:
+    raise GeminiError("Gemini key not initialized in .env file")
+
+try:
+    genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+except Exception as e:
+    raise GeminiError(str(e))
 
 # Create the text-to-text model
 model = genai.GenerativeModel('gemini-pro')

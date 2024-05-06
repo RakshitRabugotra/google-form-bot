@@ -63,7 +63,7 @@ def random_checkbox(checkbox_options: list[str], i_min: int = 1, i_max: int = No
     return options
 
 
-def random_text(prompt: str) -> str:
+def generate_text(prompt: str) -> str:
     """
     Generates random text for the given prompt
     """
