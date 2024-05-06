@@ -10,3 +10,6 @@
 
 # The logging files
 *.log
+
+# Main development running file
+main.dev.py
