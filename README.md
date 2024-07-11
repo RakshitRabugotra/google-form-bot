@@ -153,9 +153,11 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 
 - [Selenium](https://www.selenium.dev/)
 - [Python](https://python.org/)
+- [Gemini](https://ai.google.dev/gemini-api)
 
 ## Also read
 - [Selenium-docs](https://selenium-python.readthedocs.io/)
+- [Gemini-docs](https://ai.google.dev/gemini-api/docs)
 
 ## Contact
 
