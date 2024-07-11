@@ -48,10 +48,18 @@ class Driver:
         while (count <= responses):
             self.driver = webdriver.Chrome()
             self.driver.get(self.url)
+            # Wait for 2 seconds
+            time.sleep(2)
+
             # Iterate over each xPath and give response for that based on the input
             for xPath in self.xPaths:
                 # Get the options for the
                 result = self.__get_results(xPath)
+
+                # Check if the element is GENDER
+                if isinstance(result['element'], str) and ElementType.is_gender(xPath.type):
+                    # Tick the radio element
+                    self.get_element(result['element']).click()
 
                 # Result's element will be a string if the xPath is of type 'text'
                 if isinstance(result['element'], str) and ElementType.is_text(xPath.type):
@@ -100,16 +108,11 @@ class Driver:
             'payload': None
         }
         # Choose a gender for the response
-        # gender = randomizer.random_gender()
+        gender = randomizer.random_gender()
+        person = randomizer.random_person(gender)
 
         # autopep8: off
         match xPath.type:
-            # case ElementType.NAME:
-                # element, result = (xPath['options'], randomizer.random_name(gender))
-
-            # case ElementType.GENDER:
-                # element, result = (xPath['options'], gender)
-
             case ElementType.RADIO:
                 result['element'] = randomizer.random_radio(xPath.options)
 
@@ -119,6 +122,22 @@ class Driver:
             case ElementType.TEXT:
                 result['element'] = xPath.options[0]
                 result['payload'] = randomizer.generate_text(xPath.name)
+
+            case ElementType.EMAIL:
+                result['element'] = xPath.options[0]
+                result['payload'] = person['email']
+            
+            case ElementType.NAME:
+                result['element'] = xPath.options[0]
+                result['payload'] = person['name']
+
+            case ElementType.GENDER:
+                result['element'] = xPath.options[gender]
+                result['payload'] = person['gender']
+            
+            case ElementType.AGE:
+                result['element'] = xPath.options[0]
+                result['payload'] = person['age']
 
             case ElementType.SUBMIT:
                 logger.info(f"Generating Result for: {xPath.name}...")

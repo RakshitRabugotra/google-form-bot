@@ -2,6 +2,7 @@
 Records xPaths
 """
 import json
+from typing import Union
 
 # Internal Types
 from .types.element_type import ElementType
@@ -19,7 +20,7 @@ class XPathSet:
     Represents a mapping of various attributes related to HTML element
     """
 
-    def __init__(self, name: str, elementType: str, options: list[str] = []):
+    def __init__(self, name: str, elementType: str, options: Union[list[str], dict[str, str]] = []):
         self.__name = name
         self.__options = options
         # Check if the type is valid
@@ -28,15 +29,15 @@ class XPathSet:
         except AssertionError as ae:
             logger.error(
                 f"Given element-type for: {name} is invalid, got: {elementType} | {ae}")
-            elementType = []
+            elementType = ""
         finally:
             self.__type = elementType
 
     @classmethod
-    def from_dict(cls, xPathSet: dict[str, str | list[str]]):
+    def from_dict(cls, xPathSet: dict[str, Union[str, list[str], dict[str, str]]]):
         name: str = xPathSet["name"]
         type: str = xPathSet["type"]
-        options: list[str] = xPathSet["options"]
+        options: Union[list[str], dict[str, str]] = xPathSet["options"]
         return cls(name, type, options)
 
     @property
@@ -65,6 +66,12 @@ class XPathSet:
             'options': self.options
         }
 
+    def __str__(self):
+        return str(self.__dict__())
+
+    def __repr__(self):
+        return str(self)
+
 
 class XPathRecorder:
     json_file = JSON_FILE
@@ -85,11 +92,10 @@ class XPathRecorder:
     def stop_recording(self):
         self.recording = False
 
-    def record_element(self, name: str, firstXPath: str, lastXPath: str, numOptions: int, elementType: str = None):
+    def record_element(self, name: str, firstXPath: str, lastXPath: str | None, numOptions: int, elementType: str):
         """
         Records the element for answer
         """
-
         # Check if we can record
         if not self.can_record or not self.recording:
             return
@@ -98,7 +104,7 @@ class XPathRecorder:
         diff_index = first_different_index(firstXPath, lastXPath)
 
         # Generate xPaths based on given first and last xPath with the given range
-        xPath = XPathSet(name, elementType)
+        xPath = XPathSet(name, elementType, options=[])
 
         if (diff_index == -1) or lastXPath is None:
             # The paths are same, so only 1 path exists
@@ -111,19 +117,38 @@ class XPathRecorder:
                     + str(i)
                     + firstXPath[diff_index + 1:]
                 )
-
+    
         # Record the xPath
         self.xPaths.append(xPath)
-
+    
         # Write the xPaths to json file
         self.__write_paths()
 
-    def record_submit(self, xPath: str):
+
+    def record_gender_element(self, name: str, maleXPath: str, femaleXPath: str):
+        """
+        Records the element for gender
+        """
+        # Check if we can record
+        if not self.can_record or not self.recording:
+            return
+    
+        # Create a xPath set to store the element data
+        xPath = XPathSet(name, ElementType.GENDER, {
+            'male': maleXPath,
+            'female': femaleXPath
+        })
+        # Record the xPath
+        self.xPaths.append(xPath)
+
+
+    def record_submit_element(self, xPath: str):
         """
         Records the submit button of the form
         """
         self.record_element(name="submit", firstXPath=xPath,
                             lastXPath=None, numOptions=0, elementType=ElementType.SUBMIT)
+    
 
     # Private functions
     def __load_paths(self):

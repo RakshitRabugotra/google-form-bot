@@ -1,4 +1,4 @@
-def first_different_index(string1: str, string2: str = None):
+def first_different_index(string1: str, string2: str | None = None):
     """Returns the first index where the two strings doesn't match"""
 
     # The second string is null, so no point in calculating

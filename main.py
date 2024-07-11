@@ -7,32 +7,45 @@ def record_elements() -> XPathRecorder:
     """
     Records the element for the webpage
     """
-
-    # Creates an instance of recorder
-    # OPTIONAL MODIFY: You can change this tow whatever you like
     recorder = XPathRecorder("./store/page.json")
 
     # Required for recording the elements, else defaults to the JSON file
     recorder.start_recording()
 
-    # Record an element
-    xpath_first: str = '<xpath_of_first_element>'
-    xpath_last: str = '<xpath_of_last_element>'
+    # Record email
+    email_element = '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div[1]/div[2]/div[1]/div/div[1]/input'
+    recorder.record_element("Email", email_element, None, 1, ElementType.EMAIL)
 
-    # MODIFY: set this to the number of options you have in the form
-    num_options: int = 6
+    # Record name
+    name_element = '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/input'
+    recorder.record_element("Name", name_element, None, 1, ElementType.NAME)
 
-    # MODIFY: set this to the type of Element type
-    element_type: str = ElementType.RADIO
+    # Record gender
+    gender_male = '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[3]/div/div/div[2]/div/div/span/div/div[1]/label/div/div[2]/div/span'
+    gender_female = '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[3]/div/div/div[2]/div/div/span/div/div[2]/label/div/div[2]/div/span'
+    recorder.record_gender_element("Gender", gender_male, gender_female)
 
-    # Call the record element function
-    recorder.record_element("<name of your choice>", xpath_first,
-                            xpath_last, num_options, element_type)
+    # Age of the responder
+    age_element = '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[4]/div/div/div[2]/div/div[1]/div/div[1]/input'
+    recorder.record_element("Age", age_element, None, 1, ElementType.AGE)
 
-    ...  # More elements to record
+    # question 1
+    ques_first = '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[5]/div/div/div[2]/div[1]/div[1]/label/div/div[2]/div/span'
+    ques_last = '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[5]/div/div/div[2]/div[1]/div[4]/label/div/div[2]/div/span'
+    recorder.record_element("What recipes do you know?", ques_first, ques_last, 4, ElementType.CHECKBOX)
+
+    # question 2
+    ques_first = '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[6]/div/div/div[2]/div/div/span/div/div[1]/label/div/div[2]/div/span'
+    ques_last = '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[6]/div/div/div[2]/div/div/span/div/div[5]/label/div/div[2]/div/span'
+    recorder.record_element("How responsive are you on a scale of 10", ques_first, ques_last, 5, ElementType.RADIO)
+
+    # Text area 
+    text_area = '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[7]/div/div/div[2]/div/div[1]/div[2]/textarea'
+    recorder.record_element(
+        "Should we be able to see information about every citizen in every country?", text_area, None, 1, ElementType.TEXT)
 
     # Submit button
-    recorder.record_submit('<xpath_of_submit_button>')
+    recorder.record_submit_element('//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div[1]/div/span/span')
 
     # To prevent from recording any more elements
     recorder.stop_recording()
@@ -47,7 +60,7 @@ if __name__ == '__main__':
     xpath_records = record_elements().xPaths
 
     # Create a driver instance
-    url: str = "https://forms.gle/HucQVYPoUvxEHGVr9"  # URL of the google form
+    url: str = "https://docs.google.com/forms/d/e/1FAIpQLSet3sr4fnwEIyRdf-12QXU4DgDfXXIUblz-6_Q0F8tGBoDb3Q/viewform"
     driver = Driver(
         url=url,
         xPaths=xpath_records
