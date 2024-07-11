@@ -1,6 +1,6 @@
 # Functional Dependencies
+from typing import Union, Literal
 from dotenv import load_dotenv
-from logger import logger
 import time
 
 # Webdriver
@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from form_bot.types.element_type import ElementType
 
 # Internal Dependencies
+from logger import logger
 from form_bot.xpath_recorder import XPathRecorder, XPathSet
 import form_bot.randomizer as randomizer
 
@@ -48,13 +49,18 @@ class Driver:
         while (count <= responses):
             self.driver = webdriver.Chrome()
             self.driver.get(self.url)
+
+            # Generate a randomized person details from the pool
+            gender = randomizer.random_gender()
+            person = randomizer.random_person(gender)
+
             # Wait for 2 seconds
             time.sleep(2)
 
             # Iterate over each xPath and give response for that based on the input
             for xPath in self.xPaths:
-                # Get the options for the
-                result = self.__get_results(xPath)
+                # Get the options for the, pass the person's details to stay consistent
+                result = self.__get_results(person, xPath)
 
                 # Check if the element is GENDER
                 if isinstance(result['element'], str) and ElementType.is_gender(xPath.type):
@@ -98,7 +104,12 @@ class Driver:
         """
         self.driver.find_element(By.XPATH, elementXPath).click()
 
-    def __get_results(self, xPath: XPathSet):
+    def __get_results(self, person: dict[Union[
+        Literal['name'],
+        Literal['gender'],
+        Literal['email'],
+        Literal['age']
+    ], str], xPath: XPathSet):
         """
         Chooses a response, Get the options for radio and checkbox,
         Generates response for a question
@@ -107,9 +118,6 @@ class Driver:
             'element': xPath.options,
             'payload': None
         }
-        # Choose a gender for the response
-        gender = randomizer.random_gender()
-        person = randomizer.random_person(gender)
 
         # autopep8: off
         match xPath.type:
@@ -132,7 +140,7 @@ class Driver:
                 result['payload'] = person['name']
 
             case ElementType.GENDER:
-                result['element'] = xPath.options[gender]
+                result['element'] = xPath.options[person['gender']]
                 result['payload'] = person['gender']
             
             case ElementType.AGE:

@@ -11,5 +11,8 @@
 # The logging files
 *.log
 
+# The residual files
+**/store
+
 # Main development running file
 main.dev.py

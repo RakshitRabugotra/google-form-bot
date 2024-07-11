@@ -1,7 +1,7 @@
 """
 Utility to generate random choices
 """
-from typing import Literal
+from typing import Literal, Union
 import random
 import csv
 from .gemini import generate_response
@@ -36,7 +36,12 @@ def random_gender(options: list[str] = GENDER_OPTIONS) -> str:
     return random.choice(options)
 
 
-def random_person(gender: str) -> str:
+def random_person(gender: str) -> dict[Union[
+        Literal['name'],
+        Literal['gender'],
+        Literal['email'],
+        Literal['age']
+    ], str]:
     """
     Generates a random name, gender, age for a given gender
     """
